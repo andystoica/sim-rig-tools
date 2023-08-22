@@ -1,0 +1,113 @@
+html,
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main {
+  display: flex;
+  width: 100%;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+
+  width: 50%;
+  margin: 0 1rem 0 2rem;
+
+  font: small-caption;
+  text-align: center;
+}
+
+.canvas {
+  width: 50%;
+  height: 100vh;
+  margin: 0 0 0 1rem;
+  background: #111;
+}
+
+/* Controls grid*/
+.group {
+  border-radius: 5px;
+  border: 2px solid #E00;
+  padding: 0.5rem;
+}
+
+.row {
+  display: flex;
+}
+
+.full-width {
+  flex: 1;
+}
+
+.half-width {
+  flex: 50%;
+}
+
+.one-third {
+  flex: 33%;
+}
+
+.two-thirds {
+  flex: 66%;
+}
+
+.spacer {
+  height: 5rem;
+}
+
+/* Control Box */
+.controlBox {
+  padding: 1rem;
+  border: 2px solid #333;
+  border-radius: 5px;
+  margin: 0.5rem;
+  background: #EEE;
+}
+
+.label {
+  display: block;
+  height: 1.5rem;
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.label strong {
+  display: block;
+  font-size: 1.3rem;
+  padding-top: 0.5rem;
+}
+
+.slider {
+  display: block;
+  margin: 2.5rem 0.5rem 0.5rem;
+}
+
+.slider.ui-slider-horizontal {
+  height: 3px;
+  background: #000;
+  border-width: 0 !important;
+  border-radius: 5px;
+}
+
+.slider span.ui-slider-handle {
+  height: 1rem;
+  width: 1rem;
+  top: 50%;
+  margin-top: -0.6rem;
+  background: #E00;
+  border: 2px solid #E00;
+  border-radius: 50%;
+  cursor: pointer;
+}

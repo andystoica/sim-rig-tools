@@ -3,10 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Sim Rig Tools</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>    
 </head>
+
 <body>
-    <h1>Sim Rig Tools</h1>
-    <p>Simple application to calculate and visualise various aspects of design, helping decision making when building a racing or flying simulation rig.</p>
+    <div class="main">
+        <div class="controls">
+            <div class="group monitorInputs">
+                <div class="row">
+                    <div class="controlBox one-third">
+                        <span class="label monitorType"></span>
+                        <div class="slider" id="sliderMonitorType"></div>
+                    </div>
+                    <div class="controlBox one-third">
+                        <span class="label diagonal">Diagonal:</span>
+                        <div class="slider" id="sliderDiagonal"></div>
+                    </div>
+                    <div class="controlBox one-third">
+                        <span class="label aspectRatio">Aspect:</span>
+                        <div class="slider" id="sliderAspectRatio"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="controlBox one-third">
+                        <span class="label numberMonitors"></span>
+                        <div class="slider" id="sliderNumberMonitors"></div>
+                    </div>
+                    <div class="controlBox one-third">
+                        <span class="label sideMonitorAngle"></span>
+                        <div class="slider" id="sliderSideMonitorAngle"></div>
+                    </div>
+                    <div class="controlBox one-third">
+                        <span class="label curvature">Curvature:</span>
+                        <div class="slider" id="sliderCurvature"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="controlBox one-third">
+                        <span class="label bezel">Bezel:</span>
+                        <div class="slider" id="sliderBezel"></div>
+                    </div>
+                    <div class="controlBox one-third">
+                        <span class="label width">Width:</span>
+                    </div>
+                    <div class="controlBox one-third">
+                        <span class="label height">Height:</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row spacer"></div>
+            
+            <div class="group viewerInputs">
+                <div class="row">
+                    <div class="controlBox one-third">
+                        <span class="label hFOV">hFOV: <strong>105</strong></span>
+                    </div>
+                    <div class="controlBox one-third">
+                        <span class="label distance">Distance:</span><div class="slider" id="sliderDistance"></div>
+                    </div>
+                    <div class="controlBox one-third">
+                        <span class="label vFOV">vFOV: <strong>37.5</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <canvas class="canvas" id="diagram"></canvas>
+    </div>
+    <script type="module" src="main.js"></script>
 </body>
 </html>
