@@ -43,6 +43,12 @@ body {
   padding: 0.5rem;
 }
 
+h3 {
+  font-size: 0.8rem;
+  font-weight: bold;
+  font-family: sans-serif;
+  text-transform: uppercase;
+}
 .row {
   display: flex;
 }
@@ -76,11 +82,14 @@ body {
   background: #EEE;
 }
 
+.controlBox.centered {
+  padding-top: 2rem;
+}
 .label {
   display: block;
   height: 1.5rem;
   font-size: 0.8rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.3rem;
 }
 
 .label strong {

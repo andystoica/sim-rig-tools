@@ -6,8 +6,8 @@
     
     <title>Sim Rig Tools</title>
     
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="styles.css">
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>    
@@ -17,44 +17,51 @@
     <div class="main">
         <div class="controls">
             <div class="group monitorInputs">
+                <h3>Monitors</h3>
                 <div class="row">
+                    <div class="controlBox one-third">
+                        <span class="label monitorCount"></span>
+                        <div class="slider" id="sliderMonitorCount"></div>
+                    </div>
                     <div class="controlBox one-third">
                         <span class="label monitorType"></span>
                         <div class="slider" id="sliderMonitorType"></div>
                     </div>
                     <div class="controlBox one-third">
-                        <span class="label diagonal">Diagonal:</span>
-                        <div class="slider" id="sliderDiagonal"></div>
-                    </div>
-                    <div class="controlBox one-third">
-                        <span class="label aspectRatio">Aspect:</span>
-                        <div class="slider" id="sliderAspectRatio"></div>
+                        <span class="label monitorDiagonal"></span>
+                        <div class="slider" id="sliderMonitorDiagonal"></div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="controlBox one-third">
-                        <span class="label numberMonitors"></span>
-                        <div class="slider" id="sliderNumberMonitors"></div>
+                        <span class="label monitorAspectRatio"></span>
+                        <div class="slider" id="sliderMonitorAspectRatio"></div>
                     </div>
                     <div class="controlBox one-third">
-                        <span class="label sideMonitorAngle"></span>
-                        <div class="slider" id="sliderSideMonitorAngle"></div>
+                        <span class="label monitorBezel"></span>
+                        <div class="slider" id="sliderMonitorBezel"></div>
                     </div>
-                    <div class="controlBox one-third">
-                        <span class="label curvature">Curvature:</span>
-                        <div class="slider" id="sliderCurvature"></div>
+                    <div class="controlBox one-third" id="controlMonitorAngle">
+                        <span class="label monitorAngle"></span>
+                        <div class="slider" id="sliderMonitorAngle"></div>
+                    </div>
+                    <div class="controlBox one-third" id="controlMonitorCurvature">
+                        <span class="label monitorCurvature"></span>
+                        <div class="slider" id="sliderMonitorCurvature"></div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="controlBox one-third">
-                        <span class="label bezel">Bezel:</span>
-                        <div class="slider" id="sliderBezel"></div>
+                        <span class="label monitorWidth"></span>
                     </div>
                     <div class="controlBox one-third">
-                        <span class="label width">Width:</span>
+                        <span class="label monitorHeight"></span>
                     </div>
                     <div class="controlBox one-third">
-                        <span class="label height">Height:</span>
+                        <span class="label monitorSetupWidth"></span>
+                    </div>
+                    <div class="controlBox one-third">
+                        <span class="label monitorSetupDepth"></span>
                     </div>
                 </div>
             </div>
@@ -62,15 +69,17 @@
             <div class="row spacer"></div>
             
             <div class="group viewerInputs">
+                <h3>Viewer</h3>
                 <div class="row">
-                    <div class="controlBox one-third">
-                        <span class="label hFOV">hFOV: <strong>105</strong></span>
+                    <div class="controlBox one-third centered">
+                        <span class="label viewerHFov"></span>
                     </div>
                     <div class="controlBox one-third">
-                        <span class="label distance">Distance:</span><div class="slider" id="sliderDistance"></div>
+                        <span class="label viewerDistance"></span>
+                        <div class="slider" id="sliderViewerDistance"></div>
                     </div>
-                    <div class="controlBox one-third">
-                        <span class="label vFOV">vFOV: <strong>37.5</strong></span>
+                    <div class="controlBox one-third centered">
+                        <span class="label viewerVFov"></span>
                     </div>
                 </div>
             </div>

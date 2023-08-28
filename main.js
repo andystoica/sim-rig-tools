@@ -4,6 +4,7 @@ import * as draw from './draw.js';
 // Canvas initialization
 const canvas = document.getElementById('diagram');
 
+
 // Viewport state
 const viewport = {
   ctx: canvas.getContext('2d'),
@@ -40,6 +41,7 @@ const viewport = {
   } 
 }
 
+
 // Input state
 const input = {
   monitorType: {
@@ -47,14 +49,16 @@ const input = {
       { label: "Flat", value: 0 },
       { label: "Curved", value: 1}
     ],
-    index: 1
+    index: 0
   },
-  numberMonitors: {
-    min: 1,
-    max: 3,
-    value: 3
+  monitorCount: {
+    presets: [
+      { label: "Single", value: 1 },
+      { label: "Triple", value: 3 }
+    ],
+    index: 0
   },
-  sideMonitorAngle: {
+  monitorAngle: {
     min: 0,
     max: 90,
     value: 60
@@ -96,16 +100,21 @@ const input = {
   }
 }
 
+
 // Monitors state
-const monitors = {
+const monitor = {
+  type: 0,
   count: 0,
   diagonal: 0,
   width: 0,
   height: 0,
   aspectRatio: 0,
   curvature: 0,
-  bezel: 10
+  bezel: 0,
+  setupWidth: 0,
+  setupDepth: 0
 }
+
 
 // Viewer state
 const viewer = {
@@ -120,60 +129,111 @@ const viewer = {
 
 // Update state
 function updateState() {
+
+  // Both monitor types
   computeModel();
   updateUI();
-
   draw.clear(viewport);
-  draw.viewer(viewport, monitors, viewer);
-  draw.curvature(viewport, monitors, viewer);
-  draw.curvedMonitors(viewport, monitors, viewer);
+  
+  
+  // Flat monitors
+  if (monitor.type === 0) {
+    draw.flatViewer(viewport, monitor, viewer);
+    draw.idealCurvature(viewport, monitor, viewer);    
+    if (monitor.count === 1) {
+      draw.flatMonitor(viewport, monitor, viewer, 0, 0);
+    } else {
+      draw.flatMonitor(viewport, monitor, viewer, 0, -1);
+      draw.flatMonitor(viewport, monitor, viewer, 0, 0);
+      draw.flatMonitor(viewport, monitor, viewer, 1, 1);
+    }
+  }
+
+  // Curved monitors
+  if (monitor.type === 1) {
+    draw.curvedViewer(viewport, monitor, viewer);
+    draw.idealCurvature(viewport, monitor, viewer);
+    if (monitor.count === 1) {
+      draw.curvedMonitor(viewport, monitor, viewer, 0);
+    } else {
+      draw.curvedMonitor(viewport, monitor, viewer, -1);
+      draw.curvedMonitor(viewport, monitor, viewer, 0);
+      draw.curvedMonitor(viewport, monitor, viewer, 1);   
+    }
+  }
 }
 
 
 function computeModel() {
-  monitors.count = input.numberMonitors.value;
-  monitors.diagonal = input.monitorDiagonal.value;
-  monitors.aspectRatio = eval(input.monitorAspectRatio.presets[input.monitorAspectRatio.index].value)
-  monitors.width = geometry.screenWidth(monitors.diagonal, monitors.aspectRatio);
-  monitors.height = geometry.screenHeight(monitors.diagonal, monitors.aspectRatio);
-  monitors.combinedWidth = (monitors.width + monitors.bezel * 2) * monitors.count;
-  monitors.curvature = input.monitorCurvature.value;
-  monitors.bezel = input.monitorBezel.value;
-  
+  // Both monitor types
+  monitor.type = input.monitorType.index;
+  monitor.count = input.monitorCount.presets[input.monitorCount.index].value;
+  monitor.diagonal = input.monitorDiagonal.value;
+  monitor.aspectRatio = eval(input.monitorAspectRatio.presets[input.monitorAspectRatio.index].value)
+  monitor.bezel = input.monitorBezel.value;
+  monitor.angle = input.monitorAngle.value;
+  monitor.curvature = input.monitorCurvature.value;
+  monitor.screenWidth = geometry.screenWidth(monitor.diagonal, monitor.aspectRatio);
+  monitor.screenHeight = geometry.screenHeight(monitor.diagonal, monitor.aspectRatio);
+  monitor.width = monitor.screenWidth + monitor.bezel * 2;
+  monitor.height = monitor.screenHeight + monitor.bezel * 2;
   viewer.distance = input.viewerDistance.value;
-  viewer.hFov = geometry.curvedHFov(monitors.combinedWidth, viewer.distance, monitors.curvature);  
-  viewer.vFov = geometry.curvedVFov(monitors.height, viewer.distance);
+  
+  // Flat monitors
+  if (monitor.type == 0) {
+    if (monitor.count === 1) {
+      monitor.setupWidth = monitor.width;
+      monitor.setupDepth = 0;        
+    } else {
+      monitor.setupWidth = monitor.width + geometry.angledMonitorWidth(monitor) * 2;
+      monitor.setupDepth = geometry.angledMonitorHeight(monitor);  
+    }
+    viewer.hFov = geometry.flatHFov(monitor, viewer);
+    viewer.vFov = geometry.curvedVFov(monitor.height, viewer.distance);
+  }
+  
+  // Curved monitors
+  if (monitor.type == 1) {
+    monitor.setupWidth = geometry.arcWidth(monitor.width * monitor.count, monitor.curvature);
+    monitor.setupDepth = geometry.arcDepth(monitor.width * monitor.count, monitor.curvature);
+    viewer.hFov = geometry.curvedHFov(monitor.width * monitor.count, viewer.distance, monitor.curvature);    
+    viewer.vFov = geometry.curvedVFov(monitor.height, viewer.distance);
+  }
 }
 
 
 function updateUI() {
+  // Monitor controls
+  $(".controls .label.monitorCount").html(`Setup: <strong>${input.monitorCount.presets[input.monitorCount.index].label}</strong>`);
   $(".controls .label.monitorType").html(`Type: <strong>${input.monitorType.presets[input.monitorType.index].label}</strong>`);
-  $(".controls .label.diagonal").html(`Diagonal (in): <strong>${input.monitorDiagonal.value}</strong>`);
-  $(".controls .label.aspectRatio").html(`Aspect (ratio): <strong>${input.monitorAspectRatio.presets[input.monitorAspectRatio.index].label}</strong>`);
+  $(".controls .label.monitorDiagonal").html(`Diagonal (in): <strong>${input.monitorDiagonal.value}</strong>`);
   
-  $(".controls .label.numberMonitors").html(`Count: <strong>${input.numberMonitors.value}</strong>`);
+  $(".controls .label.monitorAspectRatio").html(`Aspect (ratio): <strong>${input.monitorAspectRatio.presets[input.monitorAspectRatio.index].label}</strong>`);
+  $(".controls .label.monitorBezel").html(`Bezel (mm): <strong>${input.monitorBezel.value}</strong>`);
+  $(".controls .label.monitorAngle").html(`Angle (degrees): <strong>${input.monitorAngle.value}</strong>`);
+  $(".controls .label.monitorCurvature").html(`Curvature (mm): <strong>${input.monitorCurvature.value}</strong>`);
 
-  if (input.monitorType.index == 0) { // Flat monitors
-    $(".controls .label.curvature").html(`Curvature (mm): <strong>n/a</strong>`);
-    $(".controls .label.sideMonitorAngle").html(`Angle (degrees): <strong>${input.sideMonitorAngle.value}</strong>`);
-    $("#sliderSideMonitorAngle").show();
-    $("#sliderCurvature").hide();
-  }
-
-  if (input.monitorType.index == 1) { // Curved monitors
-    $(".controls .label.curvature").html(`Curvature (mm): <strong>${input.monitorCurvature.value}</strong>`);
-    $(".controls .label.sideMonitorAngle").html(`Angle (degrees): <strong>n/a</strong>`);
-    $("#sliderSideMonitorAngle").hide();
-    $("#sliderCurvature").show();
-  }
+  $(".controls .label.monitorSetupWidth").html(`Setup width: (mm): <strong>${Math.round(monitor.setupWidth)}</strong>`);
+  $(".controls .label.monitorSetupDepth").html(`Setup depth: (mm): <strong>${Math.round(monitor.setupDepth)}</strong>`);
+  $(".controls .label.monitorWidth").html(`Monitor width (mm): <strong>${Math.round(monitor.width)}</strong>`);
+  $(".controls .label.monitorHeight").html(`Monitor height (mm): <strong>${Math.round(monitor.height)}</strong>`);
   
-  $(".controls .label.width").html(`Width: (mm): <strong>${Math.round(monitors.width + monitors.bezel * 2)}</strong>`);
-  $(".controls .label.bezel").html(`Bezel (mm): <strong>${input.monitorBezel.value}</strong>`);
-  $(".controls .label.height").html(`Height (mm): <strong>${Math.round(monitors.height + monitors.bezel * 2)}</strong>`);
+    // Flat monitors
+    if (input.monitorType.index == 0) { 
+      $("#controlMonitorAngle").show();
+      $("#controlMonitorCurvature").hide();
+    }
+    
+    // Curved monitors
+    if (input.monitorType.index == 1) { 
+      $("#controlMonitorAngle").hide();
+      $("#controlMonitorCurvature").show();
+    }
   
-  $(".controls .label.hFOV").html(`hFOV (degrees): <strong>${Math.round(geometry.degrees(viewer.hFov))}\u00B0</strong>`);
-  $(".controls .label.distance").html(`Distance (mm): <strong>${input.viewerDistance.value}</strong>`);
-  $(".controls .label.vFOV").html(`vFOV (degrees): <strong>${Math.round(geometry.degrees(viewer.vFov))}\u00B0</strong>`);
+  // Viewer controls
+  $(".controls .label.viewerHFov").html(`hFOV (degrees): <strong>${Math.round(geometry.degrees(viewer.hFov))}\u00B0</strong>`);
+  $(".controls .label.viewerDistance").html(`Distance (mm): <strong>${input.viewerDistance.value}</strong>`);
+  $(".controls .label.viewerVFov").html(`vFOV (degrees): <strong>${Math.round(geometry.degrees(viewer.vFov))}\u00B0</strong>`);
 }
 
 
@@ -191,6 +251,17 @@ function resizeCanvas(canvas) {
 
 
 // UI Controls
+$(document).ready(function() {
+  $("#sliderMonitorCount").slider({
+    min: 0,
+    max: input.monitorCount.presets.length -1 ,
+    value: input.monitorCount.index,
+    slide: (event, ui) => {
+      input.monitorCount.index = ui.value;
+      updateState();
+    }
+  });
+});
 
 $(document).ready(function () {
   $("#sliderMonitorType").slider({
@@ -205,31 +276,7 @@ $(document).ready(function () {
 });
 
 $(document).ready(function() {
-  $("#sliderNumberMonitors").slider({
-    min: input.numberMonitors.min,
-    max: input.numberMonitors.max,
-    value: input.numberMonitors.value,
-    slide: (event, ui) => {
-      input.numberMonitors.value = ui.value;
-      updateState();
-    }
-  });
-});
-
-$(document).ready(function() {
-  $("#sliderSideMonitorAngle").slider({
-    min: input.sideMonitorAngle.min,
-    max: input.sideMonitorAngle.max,
-    value: input.sideMonitorAngle.value,
-    slide: (event, ui) => {
-      input.sideMonitorAngle.value = ui.value;
-      updateState();
-    }
-  });
-});
-
-$(document).ready(function() {
-  $("#sliderDiagonal").slider({
+  $("#sliderMonitorDiagonal").slider({
     min: input.monitorDiagonal.min,
     max: input.monitorDiagonal.max,
     value: input.monitorDiagonal.value,
@@ -241,7 +288,7 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-  $("#sliderAspectRatio").slider({
+  $("#sliderMonitorAspectRatio").slider({
     min: 0,
     max: input.monitorAspectRatio.presets.length - 1,
     value: input.monitorAspectRatio.index,
@@ -253,7 +300,31 @@ $(document).ready(function() {
 });
 
 $(document).ready(function () {
-  $("#sliderCurvature").slider({
+  $("#sliderMonitorBezel").slider({
+    min: input.monitorBezel.min,
+    max: input.monitorBezel.max,
+    value: input.monitorBezel.value,
+    slide: (event, ui) => {
+      input.monitorBezel.value = ui.value;
+      updateState();
+    }
+  });
+});
+
+$(document).ready(function() {
+  $("#sliderMonitorAngle").slider({
+    min: input.monitorAngle.min,
+    max: input.monitorAngle.max,
+    value: input.monitorAngle.value,
+    slide: (event, ui) => {
+      input.monitorAngle.value = ui.value;
+      updateState();
+    }  
+  });  
+});  
+
+$(document).ready(function () {
+  $("#sliderMonitorCurvature").slider({
     min: input.monitorCurvature.min,
     max: input.monitorCurvature.max,
     step: input.monitorCurvature.step,
@@ -266,19 +337,7 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
-  $("#sliderBezel").slider({
-    min: input.monitorBezel.min,
-    max: input.monitorBezel.max,
-    value: input.monitorBezel.value,
-    slide: (event, ui) => {
-      input.monitorBezel.value = ui.value;
-      updateState();
-    }
-  });
-});
-
-$(document).ready(function () {
-  $("#sliderDistance").slider({
+  $("#sliderViewerDistance").slider({
     min: input.viewerDistance.min,
     max: input.viewerDistance.max,
     step: input.viewerDistance.step,
