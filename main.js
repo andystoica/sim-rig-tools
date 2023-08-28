@@ -56,7 +56,7 @@ const input = {
       { label: "Single", value: 1 },
       { label: "Triple", value: 3 }
     ],
-    index: 0
+    index: 1
   },
   monitorAngle: {
     min: 0,
@@ -74,8 +74,8 @@ const input = {
       { label: "4:3", value: 4 / 3 },
       { label: "16:10", value: 16 / 10 },
       { label: "16:9", value: 16 / 9 },
-      { label: "21:9", value: 21 / 9 },
       { label: "21:10", value: 21 / 10 },
+      { label: "21:9", value: 21 / 9 },
       { label: "32:10", value: 32 / 10 },
       { label: "32:9", value: 32 / 9 }
     ],
